@@ -7,6 +7,7 @@
 {
   catalogue = {
     caddy-edge = ./dendrites/caddy-edge.nix;
+    dev-tools = ./dendrites/dev-tools.nix;
     proxmox-guest = ./dendrites/proxmox-guest.nix;
     tailscale = ./dendrites/tailscale.nix;
   };
