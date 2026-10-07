@@ -7,7 +7,6 @@
   dendrites = {
     tailscale.enable = true;
     caddy-edge.enable = true;
-    secrets.enable = true;
   };
 
   users.admin = {

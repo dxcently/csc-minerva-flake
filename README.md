@@ -16,7 +16,7 @@ records in a private overlay flake that consumes this one.
 | `modules/dendrites/caddy-edge.nix` | Caddy with one wildcard cert by Cloudflare DNS-01; one subdomain per app |
 | `modules/dendrites/proxmox-guest.nix` | QEMU guest agent, serial console, disk growth |
 | `modules/aggregations/server/` | the `server` group: a Proxmox guest |
-| `modules/nucleus/` | key-only SSH, firewall, flakes |
+| `modules/nucleus/` | key-only SSH, firewall, flakes, sops-nix secrets |
 | `hosts/example-edge/` | a template host record (RFC 5737 / `example.org` placeholders) |
 | `users/admin.nix` | the one account; no password, no keys |
 
@@ -38,7 +38,7 @@ inputs.minerva.url = "github:dxcently/csc-minerva-flake";
 ## Secrets (sops-nix)
 
 Secrets are sops-nix: encrypted to the host's own SSH host key, decrypted to
-`/run/secrets` at activation, never in the Nix store (`modules/dendrites/secrets.nix`).
+`/run/secrets` at activation, never in the Nix store (`modules/nucleus/secrets.nix`).
 `secrets/example-edge.yaml` holds dummy values encrypted to a discarded key, as a
 shape reference only. Real secrets belong in your private overlay, not here. The
 Cloudflare token reaches Caddy as a systemd credential. Scope it to the one zone: Zone:DNS:Edit and Zone:Zone:Read.
