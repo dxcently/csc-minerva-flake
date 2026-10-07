@@ -16,6 +16,7 @@ records in a private overlay flake that consumes this one.
 | `modules/dendrites/caddy-edge.nix` | Caddy with one wildcard cert by Cloudflare DNS-01; one subdomain per app |
 | `modules/dendrites/proxmox-guest.nix` | QEMU guest agent, serial console, disk growth |
 | `modules/dendrites/dev-tools.nix` | operator tools: neovim, tmux, ripgrep, jq, sops, age |
+| `modules/aggregations/base/` | the `base` group every host selects: `proxmox-guest`, `dev-tools` |
 | `modules/nucleus/` | key-only SSH, firewall, flakes, sops-nix secrets |
 | `hosts/example-edge/` | a template host record (RFC 5737 / `example.org` placeholders) |
 | `users/admin.nix` | the one account; no password, no keys |

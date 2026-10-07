@@ -2,9 +2,9 @@
 # placeholder (RFC 5737 / example.org); copy it into a PRIVATE overlay flake and
 # replace them there. Never put real addresses, keys or tokens in this tree.
 {
+  aggregation.base.enable = true;
+
   dendrites = {
-    dev-tools.enable = true;
-    proxmox-guest.enable = true;
     tailscale.enable = true;
     caddy-edge.enable = true;
   };
