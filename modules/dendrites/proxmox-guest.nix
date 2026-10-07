@@ -9,6 +9,10 @@
     {
       imports = [ (modulesPath + "/virtualisation/proxmox-image.nix") ];
 
+      # Hostname and network come from the host record, not from PVE's
+      # cloud-init (which would force the hostname empty).
+      proxmox.cloudInit.enable = lib.mkDefault false;
+
       services.qemuGuest.enable = true;
       boot.growPartition = lib.mkDefault true;
     };
