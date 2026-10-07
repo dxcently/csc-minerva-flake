@@ -6,6 +6,9 @@
       "flakes"
     ];
     auto-optimise-store = true;
+    # Remote deploys (`nixos-rebuild --target-host`) copy closures as the admin
+    # user; wheel already has passwordless sudo, so this grants nothing new.
+    trusted-users = [ "@wheel" ];
   };
 
   time.timeZone = lib.mkDefault "America/New_York";
