@@ -1,0 +1,9 @@
+result
+result-*
+# Secrets never live in this tree.
+*.token
+*cloudflare*token*
+secrets/
+*.key
+*.pem
+.direnv/
