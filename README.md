@@ -31,7 +31,7 @@ To run it, create a private flake that takes this one as an input, copy
 `hosts/example-edge/default.nix` into it, and fill in your values there:
 
 ```nix
-inputs.minerva.url = "github:dxcently/csc-minerva-node-flake";
+inputs.minerva.url = "github:dxcently/csc-minerva-flake";
 ```
 
 ## Secrets
