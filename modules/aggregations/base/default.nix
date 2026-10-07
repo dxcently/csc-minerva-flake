@@ -5,10 +5,12 @@
 # every host selects. Capabilities only some hosts need (tailscale, caddy-edge)
 # stay out of it and are selected per host.
 {
-  description = "A Minerva host: a Proxmox guest with the operator's tools.";
+  description = "A Minerva host: a hardened Proxmox guest with operator and network tools.";
 
   system.members = [
     "dev-tools"
+    "hardening"
+    "network-tools"
     "proxmox-guest"
   ];
 }

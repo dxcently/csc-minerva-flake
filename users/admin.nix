@@ -8,7 +8,10 @@
       users.users.admin = {
         isNormalUser = true;
         description = "Minerva administrator";
-        extraGroups = [ "wheel" ];
+        extraGroups = [
+          "wheel"
+          "wireshark"
+        ];
         hashedPassword = "!"; # no password login; key-only over SSH
       };
       security.sudo.wheelNeedsPassword = false;

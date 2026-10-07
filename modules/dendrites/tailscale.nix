@@ -43,6 +43,10 @@
       };
 
       config = {
+        # Return traffic for advertised routes is asymmetric; strict reverse-path
+        # filtering would drop it.
+        networking.firewall.checkReversePath = lib.mkIf advertising "loose";
+
         services.tailscale = {
           enable = true;
           openFirewall = true;
