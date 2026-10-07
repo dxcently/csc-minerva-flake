@@ -104,8 +104,8 @@
           # Caddy with the Cloudflare DNS provider, built from a hash-pinned
           # source. Refresh the hash with `nix build` after changing the version.
           package = pkgs.caddy.withPlugins {
-            plugins = [ "github.com/caddy-dns/cloudflare@v0.2.1" ];
-            hash = "sha256-ijDzBvNhN6kVRNkjbLMHRh1K8qP7kLCiirQJLwkzrCc=";
+            plugins = [ "github.com/caddy-dns/cloudflare@v0.2.4" ];
+            hash = "sha256-xRJ5evsAJ2akg47j3Bt6YDXJOgX88B/rKNP50KSVyNY=";
           };
           # Access logs go to the journal: the module's default file name would
           # be derived from the wildcard address.
