@@ -18,16 +18,9 @@
     { lib, ... }:
     {
       nixpkgs.hostPlatform = "x86_64-linux";
+      proxmox.qemuConf.name = "example-edge";
       networking.hostName = "example-edge";
       system.stateVersion = "25.11";
-
-      # Stand-ins so the example evaluates; a real host imports its own
-      # hardware scan or VM image module.
-      boot.loader.grub.devices = [ "/dev/vda" ];
-      fileSystems."/" = {
-        device = "/dev/disk/by-label/nixos";
-        fsType = "ext4";
-      };
 
       users.users.admin.openssh.authorizedKeys.keys = [
         # "ssh-ed25519 AAAA... you@example"

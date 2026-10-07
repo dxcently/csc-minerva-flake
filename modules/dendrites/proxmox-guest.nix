@@ -1,15 +1,15 @@
 # proxmox-guest — what a NixOS VM needs to behave under Proxmox: the QEMU guest
 # agent (shutdown, snapshots, IP reporting), a serial console for the Proxmox
-# console view, and a root filesystem that follows a resized virtual disk.
+# console view, a root filesystem that follows a resized virtual disk, and the
+# nixpkgs Proxmox image module, so `config.system.build.VMA` is a disk image
+# restorable with `qmrestore`.
 {
   nixos =
-    { lib, ... }:
+    { lib, modulesPath, ... }:
     {
+      imports = [ (modulesPath + "/virtualisation/proxmox-image.nix") ];
+
       services.qemuGuest.enable = true;
-      boot.kernelParams = [
-        "console=ttyS0,115200"
-        "console=tty0"
-      ];
       boot.growPartition = lib.mkDefault true;
     };
 }

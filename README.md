@@ -23,6 +23,7 @@ records in a private overlay flake that consumes this one.
 ## Use
 
 ```sh
+nix build .#images.example-edge              # Proxmox VMA; restore with qmrestore
 nix eval --json .#inventory.example-edge     # what the host resolved
 nix eval .#nixosConfigurations.example-edge.config.system.build.toplevel.drvPath
 ```

@@ -52,6 +52,9 @@
 
       # What each host actually resolved; `nix eval --json .#inventory.<host>`
       # is the review surface.
+      # Proxmox VMA images: `nix build .#images.<host>`, then `qmrestore`.
+      images = lib.mapAttrs (_: c: c.config.system.build.VMA) self.nixosConfigurations;
+
       inventory = lib.mapAttrs (_: h: h.inventory) hosts;
 
       # The seam a private overlay flake builds on.
