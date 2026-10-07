@@ -3,7 +3,9 @@ result-*
 # Secrets never live in this tree.
 *.token
 *cloudflare*token*
-secrets/
+# plaintext only; sops-encrypted files (secrets/*.yaml with a `sops:` block) are safe
+secrets/*.dec.*
+age-key*.txt
 *.key
 *.pem
 .direnv/

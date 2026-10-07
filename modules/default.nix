@@ -8,6 +8,7 @@
   catalogue = {
     caddy-edge = ./dendrites/caddy-edge.nix;
     proxmox-guest = ./dendrites/proxmox-guest.nix;
+    secrets = ./dendrites/secrets.nix;
     tailscale = ./dendrites/tailscale.nix;
   };
 

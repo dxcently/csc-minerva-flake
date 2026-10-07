@@ -35,11 +35,13 @@ To run it, create a private flake that takes this one as an input, copy
 inputs.minerva.url = "github:dxcently/csc-minerva-flake";
 ```
 
-## Secrets
+## Secrets (sops-nix)
 
-None are stored here. The Cloudflare token lives in a file on the machine
-(`minerva.edge.cloudflareTokenFile`, outside the Nix store) and reaches Caddy as
-a systemd credential. Scope it to the one zone: Zone:DNS:Edit and Zone:Zone:Read.
+Secrets are sops-nix: encrypted to the host's own SSH host key, decrypted to
+`/run/secrets` at activation, never in the Nix store (`modules/dendrites/secrets.nix`).
+`secrets/example-edge.yaml` holds dummy values encrypted to a discarded key, as a
+shape reference only. Real secrets belong in your private overlay, not here. The
+Cloudflare token reaches Caddy as a systemd credential. Scope it to the one zone: Zone:DNS:Edit and Zone:Zone:Read.
 Tailscale enrolls interactively; there is no auth key in the tree.
 
 ## Design rules

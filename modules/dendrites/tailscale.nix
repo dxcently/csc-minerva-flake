@@ -30,6 +30,11 @@
           default = false;
           description = "Accept routes advertised by other nodes. Leave off on a node that is already on the advertised network.";
         };
+        authKeyFile = lib.mkOption {
+          type = lib.types.nullOr lib.types.path;
+          default = null;
+          description = "Runtime path of a file holding a Tailscale auth key (e.g. a sops secret), for unattended enrollment. Null means enroll interactively. Prefer a single-use, short-expiry key.";
+        };
         operator = lib.mkOption {
           type = lib.types.nullOr lib.types.str;
           default = null;
@@ -41,6 +46,7 @@
         services.tailscale = {
           enable = true;
           openFirewall = true;
+          authKeyFile = cfg.authKeyFile;
           # "server" turns on IP forwarding for subnet routing; "client" only
           # the reverse-path settings for accepting routes; "both" does both.
           useRoutingFeatures =

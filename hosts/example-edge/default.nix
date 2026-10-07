@@ -7,6 +7,7 @@
   dendrites = {
     tailscale.enable = true;
     caddy-edge.enable = true;
+    secrets.enable = true;
   };
 
   users.admin = {
@@ -15,7 +16,7 @@
   };
 
   nixos =
-    { lib, ... }:
+    { config, ... }:
     {
       nixpkgs.hostPlatform = "x86_64-linux";
       proxmox.qemuConf.name = "example-edge";
@@ -26,14 +27,23 @@
         # "ssh-ed25519 AAAA... you@example"
       ];
 
+      minerva.secrets = {
+        file = ../../secrets/example-edge.yaml;
+        names = [
+          "cloudflare-dns-token"
+          "tailscale-authkey"
+        ];
+      };
+
       minerva.tailscale = {
+        authKeyFile = config.sops.secrets."tailscale-authkey".path;
         operator = "admin";
         advertiseRoutes = [ "192.0.2.10/32" ];
       };
 
       minerva.edge = {
         domain = "example.org";
-        cloudflareTokenFile = "/var/lib/minerva/cloudflare-dns-token";
+        cloudflareTokenFile = config.sops.secrets."cloudflare-dns-token".path;
         sites = {
           auth.upstream = "http://192.0.2.20:9000";
           quotient.upstream = "http://192.0.2.21:8080";
