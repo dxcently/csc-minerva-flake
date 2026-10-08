@@ -7,7 +7,8 @@
 # tailnet client gets the edge's tailnet IP while a LAN client gets its LAN IP.
 # A client matching no view gets no answer (REFUSED) and keeps using public
 # DNS. AAAA is answered empty, so clients never fall back to a public IPv6
-# path. Nothing outside the zone is served: this is not a resolver.
+# path. Outside the zone it is a resolver only for `recursion.cidrs` (a LAN
+# whose DHCP points every lookup here); everyone else is refused.
 #
 # Point clients at it with the tailnet's split DNS (zone -> this host's
 # tailnet IP), or a LAN DHCP option. `extraRecords` adds names that exist only
@@ -74,6 +75,26 @@
             }
           );
         };
+        recursion = {
+          cidrs = lib.mkOption {
+            type = lib.types.listOf lib.types.str;
+            default = [ ];
+            example = [ "192.0.2.0/24" ];
+            description = ''
+              Clients that use this server for ALL lookups (a LAN whose DHCP
+              hands it out): names outside the zone are forwarded upstream for
+              them, and refused for everyone else.
+            '';
+          };
+          upstreams = lib.mkOption {
+            type = lib.types.listOf lib.types.str;
+            default = [
+              "1.1.1.1"
+              "1.0.0.1"
+            ];
+            description = "Resolvers that recursion forwards to.";
+          };
+        };
         extraRecords = lib.mkOption {
           type = lib.types.attrsOf lib.types.str;
           default = { };
@@ -94,6 +115,23 @@
               acl {
                 block
               }
+            }
+            .:53 {
+              bind ${lib.concatStringsSep " " cfg.interfaces}
+              ${lib.optionalString (cfg.recursion.cidrs != [ ]) ''
+                acl {
+                  allow net ${lib.concatStringsSep " " cfg.recursion.cidrs}
+                  block
+                }
+                forward . ${lib.concatStringsSep " " cfg.recursion.upstreams}
+                cache 300
+              ''}
+              ${lib.optionalString (cfg.recursion.cidrs == [ ]) ''
+                acl {
+                  block
+                }
+              ''}
+              errors
             }
           '';
         };
