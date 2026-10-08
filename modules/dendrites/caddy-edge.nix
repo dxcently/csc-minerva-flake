@@ -28,19 +28,30 @@
       cfg = config.minerva.edge;
       credential = "/run/credentials/caddy.service/cloudflare-dns-token";
 
+      # `route` keeps the written order: the gate runs before anything the
+      # site serves, extraConfig included.
       siteBlock = name: site: ''
         @${name} host ${name}.${cfg.domain}
         handle @${name} {
-          reverse_proxy ${site.upstream}${
-            lib.optionalString (site.tlsCaFile != null || site.tlsServerName != null) ''
-               {
-                transport http {
-                  ${lib.optionalString (site.tlsCaFile != null) "tls_trust_pool file ${site.tlsCaFile}"}
-                  ${lib.optionalString (site.tlsServerName != null) "tls_server_name ${site.tlsServerName}"}
-                }
-              }''
+          route {
+            ${lib.optionalString (site.forwardAuth != null) ''
+              reverse_proxy /outpost.goauthentik.io/* ${site.forwardAuth}
+              forward_auth ${site.forwardAuth} {
+                uri /outpost.goauthentik.io/auth/caddy
+                copy_headers X-Authentik-Username X-Authentik-Groups X-Authentik-Email
+              }
+            ''}
+            ${site.extraConfig}
+            reverse_proxy ${site.upstream}${
+              lib.optionalString (site.tlsCaFile != null || site.tlsServerName != null) ''
+                 {
+                  transport http {
+                    ${lib.optionalString (site.tlsCaFile != null) "tls_trust_pool file ${site.tlsCaFile}"}
+                    ${lib.optionalString (site.tlsServerName != null) "tls_server_name ${site.tlsServerName}"}
+                  }
+                }''
+            }
           }
-          ${site.extraConfig}
         }
       '';
     in
@@ -60,6 +71,16 @@
           type = lib.types.str;
           example = "/var/lib/minerva/cloudflare-dns-token";
           description = "Runtime path of a file holding only the scoped Cloudflare API token. Never a Nix store path.";
+        };
+        trustedProxies = lib.mkOption {
+          type = lib.types.listOf lib.types.str;
+          default = [ ];
+          example = [ "127.0.0.1/32" ];
+          description = ''
+            Peers whose client-IP headers Caddy believes (e.g. a local
+            cloudflared). Their requests are logged and forwarded with the
+            address from CF-Connecting-IP / X-Forwarded-For instead.
+          '';
         };
         apexResponse = lib.mkOption {
           type = lib.types.lines;
@@ -89,7 +110,16 @@
                 extraConfig = lib.mkOption {
                   type = lib.types.lines;
                   default = "";
-                  description = "Extra directives inside this site's handle block.";
+                  description = "Extra directives, run in order after the gate and before the proxy.";
+                };
+                forwardAuth = lib.mkOption {
+                  type = lib.types.nullOr lib.types.str;
+                  default = null;
+                  example = "http://192.0.2.20:9000";
+                  description = ''
+                    Authentik outpost to gate the whole site with (forward auth,
+                    single application). Null leaves the site ungated.
+                  '';
                 };
               };
             }
@@ -101,6 +131,12 @@
         services.caddy = {
           enable = true;
           email = cfg.acmeEmail;
+          globalConfig = lib.optionalString (cfg.trustedProxies != [ ]) ''
+            servers {
+              trusted_proxies static ${lib.concatStringsSep " " cfg.trustedProxies}
+              client_ip_headers CF-Connecting-IP X-Forwarded-For
+            }
+          '';
           # Caddy with the Cloudflare DNS provider, built from a hash-pinned
           # source. Refresh the hash with `nix build` after changing the version.
           package = pkgs.caddy.withPlugins {
