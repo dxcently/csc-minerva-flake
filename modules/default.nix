@@ -12,6 +12,7 @@
     hardening = ./dendrites/hardening.nix;
     network-tools = ./dendrites/network-tools.nix;
     proxmox-guest = ./dendrites/proxmox-guest.nix;
+    split-dns = ./dendrites/split-dns.nix;
     tailscale = ./dendrites/tailscale.nix;
   };
 
