@@ -7,6 +7,7 @@
 {
   catalogue = {
     caddy-edge = ./dendrites/caddy-edge.nix;
+    cloudflare-tunnel = ./dendrites/cloudflare-tunnel.nix;
     dev-tools = ./dendrites/dev-tools.nix;
     hardening = ./dendrites/hardening.nix;
     network-tools = ./dendrites/network-tools.nix;
